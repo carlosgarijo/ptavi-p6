@@ -8,11 +8,11 @@ import socket
 import sys
 
 # Cliente UDP simple.
-Command_Line = sys.argv
-if len(Command_Line) != 3:
+try:
+    (_, Metodo, Direccion) = sys.argv
+    Metodo = Metodo.upper()
+except:
     sys.exit("Usage: python3 client.py method receiver@IP:SIPport")
-Metodo = Command_Line[1].upper()
-Direccion = Command_Line[2]
 
 # Dirección IP del servidor.
 SERVER = Direccion.split("@")[1].split(":")[0]
