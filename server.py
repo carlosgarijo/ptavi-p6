@@ -27,10 +27,14 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                 print("El cliente nos manda " + line_decode)
                 Metodo_rcv = line_decode.split(" ")[0]
                 if Metodo_rcv == "INVITE":
-                    Answer_inv = "SIP/2.0 100 Trying\r\n\r\n"
-                    Answer_inv += "SIP/2.0 180 Ring\r\n\r\n"
-                    Answer_inv += "SIP/2.0 200 OK\r\n\r\n"
-                    self.wfile.write(bytes(Answer_inv, 'utf-8'))
+                    Answer = "SIP/2.0 100 Trying\r\n\r\n"
+                    Answer += "SIP/2.0 180 Ring\r\n\r\n"
+                    Answer += "SIP/2.0 200 OK\r\n\r\n"
+                elif Metodo_rcv == "ACK" or Metodo_rcv == "BYE":
+                    Answer = "SIP/2.0 200 OK\r\n\r\n"
+                else:
+                    Answer = "SIP/2.0 405 Method Not Allowed\r\n\r\n"
+                self.wfile.write(bytes(Answer, 'utf-8'))
             # Si no hay más líneas salimos del bucle infinito
             if not line:
                 break
