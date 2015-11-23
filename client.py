@@ -19,17 +19,29 @@ SERVER = Direccion.split("@")[1].split(":")[0]
 PORT = int(Direccion.split("@")[1].split(":")[1])
 
 # Contenido que vamos a enviar
-LINE = Metodo + " sip:" + Direccion.split(":")[0] + " SIP/2.0\r\n\r\n"
+request = Metodo + " sip:" + Direccion.split(":")[0] + " SIP/2.0\r\n\r\n"
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 my_socket.connect((SERVER, PORT))
 
-print("Enviando: " + LINE)
-my_socket.send(bytes(LINE, 'utf-8') + b'\r\n')
-data = my_socket.recv(1024)
+print("Enviando: " + request)
+my_socket.send(bytes(request, 'utf-8') + b'\r\n')
 
-print('Recibido -- ', data.decode('utf-8'))
+Answer_inv = my_socket.recv(1024)
+Answer_inv_decode = Answer_inv.decode('utf-8')
+print(Answer_inv_decode)
+Answer_list = Answer_inv_decode.split("\r\n\r\n")
+Answer_list.pop()
+if len(Answer_list) == 3:
+    Metodo = "ACK"
+    line = Metodo + " sip:" + Direccion.split(":")[0] + " SIP/2.0\r\n\r\n"
+    print("Enviando: " + line)
+    my_socket.send(bytes(line, 'utf-8') + b'\r\n')
+    Answer_ack = my_socket.recv(1024)
+    Answer_ack_decode = Answer_ack.decode('utf-8')
+    print(Answer_ack_decode)
+
 print("Terminando socket...")
 
 # Cerramos todo
