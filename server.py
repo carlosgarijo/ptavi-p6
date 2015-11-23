@@ -17,7 +17,7 @@ class EchoHandler(socketserver.DatagramRequestHandler):
     def handle(self):
         # Escribe dirección y puerto del cliente (de tupla client_address)
         #self.wfile.write(b"Hemos recibido tu peticion")
-        IP = str(self.client_address[0])
+        Client_IP = str(self.client_address[0])
         fichero_audio = sys.argv[3]
         #Metodos = ['INVITE', 'ACK', 'BYE']
         while 1:
@@ -25,7 +25,7 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             line = self.rfile.read()
             line_decode = line.decode('utf-8')
             if line_decode:
-                request = line.split(" ")
+                request = line_decode.split(" ")
                 if len(request) == 3:
                     print("El cliente nos manda " + line_decode)
                     Metodo_rcv = line_decode.split(" ")[0]
@@ -33,15 +33,21 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                         Answer = "SIP/2.0 100 Trying\r\n\r\n"
                         Answer += "SIP/2.0 180 Ring\r\n\r\n"
                         Answer += "SIP/2.0 200 OK\r\n\r\n"
+                        self.wfile.write(bytes(Answer, 'utf-8'))
                     elif Metodo_rcv == "ACK":
-                        
+                        aEjecutar = "./mp32rtp -i " + Client_IP
+                        aEjecutar += " -p 23032 < " + fichero_audio
+                        print("Ejecutamos...", aEjecutar)
+                        os.system(aEjecutar)
                     elif Metodo_rcv == "BYE":
                         Answer = "SIP/2.0 200 OK\r\n\r\n"
+                        self.wfile.write(bytes(Answer, 'utf-8'))
                     else:
                         Answer = "SIP/2.0 405 Method Not Allowed\r\n\r\n"
+                        self.wfile.write(bytes(Answer, 'utf-8'))
                 else:
                     Answer = "SIP/2.0 400 Bad Request\r\n\r\n"
-                self.wfile.write(bytes(Answer, 'utf-8'))
+                    self.wfile.write(bytes(Answer, 'utf-8'))
             # Si no hay más líneas salimos del bucle infinito
             if not line:
                 break
