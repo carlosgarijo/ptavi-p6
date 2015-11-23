@@ -27,7 +27,7 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             if line_decode:
                 request = line_decode.split(" ")
                 if len(request) == 3:
-                    print("El cliente nos manda " + line_decode)
+                    print("El cliente nos manda -- " + line_decode)
                     Metodo_rcv = line_decode.split(" ")[0]
                     if Metodo_rcv == "INVITE":
                         Answer = "SIP/2.0 100 Trying\r\n\r\n"
@@ -37,11 +37,12 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                     elif Metodo_rcv == "ACK":
                         aEjecutar = "./mp32rtp -i " + Client_IP
                         aEjecutar += " -p 23032 < " + fichero_audio
-                        print("Ejecutamos...", aEjecutar)
+                        print("Ejecutamos... ", aEjecutar)
                         os.system(aEjecutar)
                     elif Metodo_rcv == "BYE":
                         Answer = "SIP/2.0 200 OK\r\n\r\n"
                         self.wfile.write(bytes(Answer, 'utf-8'))
+                        print("Terminando conversación... ")
                     else:
                         Answer = "SIP/2.0 405 Method Not Allowed\r\n\r\n"
                         self.wfile.write(bytes(Answer, 'utf-8'))
