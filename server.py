@@ -16,10 +16,8 @@ class EchoHandler(socketserver.DatagramRequestHandler):
 
     def handle(self):
         # Escribe dirección y puerto del cliente (de tupla client_address)
-        #self.wfile.write(b"Hemos recibido tu peticion")
         Client_IP = str(self.client_address[0])
         fichero_audio = sys.argv[3]
-        #Metodos = ['INVITE', 'ACK', 'BYE']
         while 1:
             # Leyendo línea a línea lo que nos envía el cliente
             line = self.rfile.read()
@@ -43,10 +41,10 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                         Answer = "SIP/2.0 200 OK\r\n\r\n"
                         self.wfile.write(bytes(Answer, 'utf-8'))
                         print("Terminando conversación... ")
-                    else:
+                    else Metodo_rcv != ("INVITE", "ACK", "BYE"):
                         Answer = "SIP/2.0 405 Method Not Allowed\r\n\r\n"
                         self.wfile.write(bytes(Answer, 'utf-8'))
-                else:
+                elif:
                     Answer = "SIP/2.0 400 Bad Request\r\n\r\n"
                     self.wfile.write(bytes(Answer, 'utf-8'))
             # Si no hay más líneas salimos del bucle infinito
